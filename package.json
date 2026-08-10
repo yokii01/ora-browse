@@ -1,0 +1,18 @@
+{
+  "name": "ora-browse",
+  "version": "0.1.0",
+  "description": "Autonomous AI Browser Platform for Hermes",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
