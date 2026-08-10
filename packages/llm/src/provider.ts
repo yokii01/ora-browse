@@ -37,6 +37,7 @@ export interface ChatResult {
   message: ChatMessage;
   usage: TokenUsage;
   finishReason: string;
+  text?: string; // Added for compatibility with GenerationResult
 }
 
 export interface ChatMessage {
@@ -61,6 +62,28 @@ export interface LLMConfig {
   verificationModel?: string;
 }
 
+// Type definitions for API responses
+interface ChatCompletionResponse {
+  choices: Array<{
+    message: {
+      role: string;
+      content: string | null;
+    };
+    finish_reason: string;
+  }>;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+interface EmbeddingResponse {
+  data: Array<{
+    embedding: number[];
+  }>;
+}
+
 // NVIDIA NIM Provider Implementation
 export class NVIDIANIMProvider implements LLMProvider {
   readonly name = 'nvidia-nim';
@@ -80,7 +103,12 @@ export class NVIDIANIMProvider implements LLMProvider {
       { role: 'user', content: prompt }
     ];
     
-    return this.chat(messages, options);
+    const result = await this.chat(messages, options);
+    return {
+      text: result.message.content,
+      usage: result.usage,
+      finishReason: result.finishReason
+    };
   }
 
   async chat(messages: ChatMessage[], options?: GenerationOptions): Promise<ChatResult> {
@@ -108,19 +136,28 @@ export class NVIDIANIMProvider implements LLMProvider {
       throw new Error(`NVIDIA NIM API Error: ${response.status} ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as ChatCompletionResponse;
+    
+    // Validate response structure
+    if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+      throw new Error('Invalid API response: missing choices array');
+    }
+
+    const choice = data.choices[0];
+    const content = choice.message.content ?? '';
     
     return {
       message: {
         role: 'assistant',
-        content: data.choices[0].message.content
+        content
       },
+      text: content, // Added for GenerationResult compatibility
       usage: {
         promptTokens: data.usage?.prompt_tokens ?? 0,
         completionTokens: data.usage?.completion_tokens ?? 0,
         totalTokens: data.usage?.total_tokens ?? 0
       },
-      finishReason: data.choices[0].finish_reason
+      finishReason: choice.finish_reason
     };
   }
 
@@ -144,7 +181,12 @@ export class NVIDIANIMProvider implements LLMProvider {
       throw new Error(`NVIDIA Embedding API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as EmbeddingResponse;
+    
+    if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+      throw new Error('Invalid embedding response: missing data array');
+    }
+    
     return data.data[0].embedding;
   }
 }
@@ -168,7 +210,12 @@ export class OpenAICompatibleProvider implements LLMProvider {
       { role: 'user', content: prompt }
     ];
     
-    return this.chat(messages, options);
+    const result = await this.chat(messages, options);
+    return {
+      text: result.message.content,
+      usage: result.usage,
+      finishReason: result.finishReason
+    };
   }
 
   async chat(messages: ChatMessage[], options?: GenerationOptions): Promise<ChatResult> {
@@ -196,19 +243,28 @@ export class OpenAICompatibleProvider implements LLMProvider {
       throw new Error(`OpenAI API Error: ${response.status} ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as ChatCompletionResponse;
+    
+    // Validate response structure
+    if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+      throw new Error('Invalid API response: missing choices array');
+    }
+
+    const choice = data.choices[0];
+    const content = choice.message.content ?? '';
     
     return {
       message: {
         role: 'assistant',
-        content: data.choices[0].message.content
+        content
       },
+      text: content, // Added for GenerationResult compatibility
       usage: {
         promptTokens: data.usage?.prompt_tokens ?? 0,
         completionTokens: data.usage?.completion_tokens ?? 0,
         totalTokens: data.usage?.total_tokens ?? 0
       },
-      finishReason: data.choices[0].finish_reason
+      finishReason: choice.finish_reason
     };
   }
 
@@ -231,7 +287,12 @@ export class OpenAICompatibleProvider implements LLMProvider {
       throw new Error(`Embedding API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as EmbeddingResponse;
+    
+    if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+      throw new Error('Invalid embedding response: missing data array');
+    }
+    
     return data.data[0].embedding;
   }
 }
