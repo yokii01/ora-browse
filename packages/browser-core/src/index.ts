@@ -6,16 +6,13 @@
 // Canonical public API: enhanced v2 types only.
 export * from './types-v2';
 
-// Browser adapter interfaces (exclude PageInfo which is already in types-v2)
+// Browser adapter interfaces (non-conflicting exports only)
 export type {
   BrowserAdapter,
   NavigationOptions,
   ObservationOptions,
   BrowserAdapterFactory
 } from './interfaces';
-
-// Re-export non-conflicting values from interfaces
-export { } from './interfaces';
 
 // Shared constants
 export * from './constants';
