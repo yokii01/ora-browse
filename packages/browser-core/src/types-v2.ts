@@ -144,7 +144,7 @@ export interface ElementInfo {
   confidence: number;
   children?: ElementInfo[];
   attributes?: Record<string, string>;
-  styles?: Partial<CSSStyleDeclaration>;
+  styles?: Partial<Record<string, string>>;
   tabIndex?: number;
   accessKey?: string;
   lang?: string;

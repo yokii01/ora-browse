@@ -2,8 +2,6 @@
  * Utility functions for ORA Browse
  */
 
-import { v4 as uuidv4 } from 'crypto';
-
 /**
  * Generate a unique ID
  */
@@ -122,7 +120,7 @@ export function escapeHtml(str: string): string {
     '"': '&quot;',
     "'": '&#039;'
   };
-  return str.replace(/[&<>"']/g, char => map[char]);
+  return str.replace(/[&<>"']/g, (char) => map[char] || char);
 }
 
 /**

@@ -287,7 +287,7 @@ export namespace CDP {
     
     export interface Initiator {
       type: 'parser' | 'script' | 'preload' | 'preflight' | 'other';
-      stack?: StackTrace;
+      stack?: any;
       requestId?: string;
       url?: string;
       lineNumber?: number;
@@ -295,7 +295,7 @@ export namespace CDP {
     }
     
     export interface StackTrace {
-      callFrames: CallFrame[];
+      callFrames: any[];
       parent?: StackTrace;
       parentId?: { id: string; debuggerId?: string };
     }
@@ -662,7 +662,7 @@ export namespace CDP {
       timestamp: number;
       url?: string;
       lineNumber?: number;
-      stackTrace?: StackTrace;
+      stackTrace?: { description?: string; callFrames?: Array<{ functionName?: string; url?: string; lineNumber?: number; columnNumber?: number }> };
       networkRequestId?: string;
       workerId?: string;
       args?: Runtime.RemoteObject[];
@@ -673,7 +673,7 @@ export namespace CDP {
     
     export interface AsyncStackTrace {
       description: string;
-      callFrames: CallFrame[];
+      callFrames: Array<{ functionName?: string; url?: string; lineNumber?: number; columnNumber?: number }>;
       parent?: AsyncStackTrace;
       parentId?: { id: string; debuggerId?: string };
     }
@@ -742,7 +742,7 @@ export namespace CDP {
     
     export interface IgnoredReason {
       reason: 'ariaHidden' | 'ariaInvalid' | 'ariaRoleNone' | 'childrenPresentational' | 'classHidden' | 'displayNone' | 'emptyAlt' | 'focusable' | 'hidden' | 'implicitLabel' | 'inert' | 'inputImageAltText' | 'labelEmpty' | 'landmark' | 'nativeControl' | 'negativeTabIndex' | 'noAutofocus' | 'nonFocusable' | 'notContentEditable' | 'notRelatedElement' | 'other' | 'outsideBoundary' | 'presentation' | 'redundant' | 'tabIndexNegative' | 'uninteresting' | 'unsupportedAction' | 'visibilityHidden' | 'zeroArea';
-      nodes?: BackendNode[];
+      nodes?: CDP.DOM.BackendNode[];
     }
   }
   
