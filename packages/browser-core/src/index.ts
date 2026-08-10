@@ -3,14 +3,21 @@
  * Production-ready autonomous AI browser platform
  */
 
-// Canonical public API: enhanced v2 types.
+// Canonical public API: enhanced v2 types only.
 export * from './types-v2';
 
-// Legacy API under a namespace to prevent duplicate root exports.
-export * as LegacyTypes from './types';
+// Browser adapter interfaces (exclude PageInfo which is already in types-v2)
+export type {
+  BrowserAdapter,
+  NavigationOptions,
+  ObservationOptions,
+  BrowserAdapterFactory
+} from './interfaces';
 
-// Browser adapter interfaces and shared constants.
-export * from './interfaces';
+// Re-export non-conflicting values from interfaces
+export { } from './interfaces';
+
+// Shared constants
 export * from './constants';
 
 // Version info
