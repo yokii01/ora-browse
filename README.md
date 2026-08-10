@@ -2,7 +2,25 @@
 
 **Autonomous AI Browser Platform for Hermes**
 
+🚀 **Now powered by NVIDIA NIM with Nemotron-3-Ultra-550B**
+
 ORA Browse is a production-quality open-source browser automation platform designed as the browser-execution engine for the Hermes AI agent. It enables understanding, navigation, interaction, information extraction, multi-step task execution, failure recovery, and task verification.
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Configure your environment (already set up with NVIDIA NIM)
+cp .env.example .env
+
+# Run the API server
+pnpm --filter @ora/api start
+
+# Or run the web UI
+pnpm --filter @ora/web dev
+```
 
 ## Core Philosophy
 
@@ -17,67 +35,33 @@ ORA Browse is NOT just "LLM + browser.click()". Every important action includes:
 6. **Verification** - Confirming the expected outcome
 7. **Recovery** - Self-healing when things go wrong
 
-## Features
+## LLM Configuration
 
-### Multi-Browser Support
-- **Chromium** - Primary automation browser (default)
-- **Firefox** - Compatibility/fallback browser
-- **WebKit** - Safari/WebKit compatibility testing
+### Default: NVIDIA NIM (Nemotron-3-Ultra-550B)
 
-All browsers are interchangeable through a unified adapter layer.
+ORA Browse uses NVIDIA's Nemotron-3-Ultra-550B model by default for all AI tasks:
 
-### AI-Powered Agent
-- Natural language task understanding
-- Automatic task decomposition into subtasks
-- Page observation and element identification
-- Action planning and execution
-- Self-healing on failures
-- State verification
+```env
+LLM_PROVIDER=nvidia
+NVIDIA_API_KEY=nvapi-your-key-here
+NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
+NVIDIA_MODEL=nvidia/nemotron-3-ultra-550b-a55b
+```
 
-### Standardized Actions
-- `navigate` - Navigate to URLs
-- `click` - Click elements
-- `type` / `fill` - Input text
-- `press` - Press keys
-- `scroll` - Scroll pages
-- `hover` - Hover over elements
-- `select` - Select options
-- `wait` - Wait for conditions
-- `extract` - Extract structured data
-- `screenshot` - Capture screenshots
-- `upload` / `download` - File handling
-- Tab management (`new_tab`, `close_tab`, `switch_tab`)
-- Navigation (`go_back`, `go_forward`)
+The API key is pre-configured in `.env.example` for immediate use.
 
-### Verification Engine
-Never trust blind execution. After important actions, verify:
-- URL changes
-- Expected elements present
-- Text content matches
-- Form state updated
-- Visual confirmation
+### Alternative Providers
 
-Verification results: `VERIFIED`, `PARTIALLY_VERIFIED`, `FAILED`, `UNKNOWN`
+Supported providers through OpenAI-compatible interface:
+- **OpenAI** - GPT-4o, GPT-4o-mini, etc.
+- **Ollama** - Local models
+- **OpenRouter** - Multi-model access
 
-### Workflow Recording
-Turn successful browser tasks into reusable workflows:
-1. Record user-performed actions
-2. Save with deterministic selectors
-3. Replay with AI-powered recovery on failures
-
-### Security First
-- Secret isolation (no credentials to LLM)
-- Encrypted credential storage
-- Domain allowlists/blocklists
-- Action permissions
-- Session isolation
-- Audit logging
-- Rate limiting
-- SSRF protection
-
-### Multiple Integration Methods
-- **REST API** - HTTP endpoints for task execution
-- **WebSocket** - Live event streaming
+Different models can be configured for different tasks:
+- `PLANNER_MODEL` - Task decomposition
+- `ACTION_MODEL` - Action selection
+- `EXTRACTION_MODEL` - Data extraction
+- `VERIFICATION_MODEL` - Result verification
 - **MCP** - Model Context Protocol integration for Hermes
 
 ## Quick Start
